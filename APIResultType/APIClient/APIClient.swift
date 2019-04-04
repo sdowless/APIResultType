@@ -12,6 +12,31 @@ struct APIClient {
     static let shared = APIClient()
     let base_url = "https://pokedex-bb36f.firebaseio.com/pokemon.json"
     
+    func fetchData(completion: @escaping(Result<[Pokemon], Error>) -> ()) {
+        guard let url = URL(string: base_url) else { return }
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            // handle error
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            // parse data
+            guard let data = data?.parseData(removeString: "null,") else { return }
+            
+            // decode data
+            do {
+                let pokemon = try JSONDecoder().decode([Pokemon].self, from: data)
+                completion(.success(pokemon))
+            } catch let error {
+                completion(.failure(error))
+            }
+            
+        }.resume()
+    }
+    
     func fetchData(completion: @escaping([Pokemon]?, Error?) -> ()) {
         guard let url = URL(string: base_url) else { return }
         

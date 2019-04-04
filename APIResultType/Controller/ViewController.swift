@@ -26,16 +26,26 @@ class ViewController: UIViewController {
     
     func fetchPokemon() {
         
-        APIClient.shared.fetchData { (pokemon, error) in
-            if let error = error {
+        APIClient.shared.fetchData { (result) in
+            switch result {
+            case .success(let pokemon):
+                self.pokemon = pokemon
+            case .failure(let error):
                 print("DEBUG: Failed with error \(error)")
-                return
             }
-
-            guard let pokemon = pokemon else { return }
-            print("DEBUG: Pokemon array -> \(pokemon)")
-            self.pokemon = pokemon
         }
+
+        
+//        APIClient.shared.fetchData { (pokemon, error) in
+//            if let error = error {
+//                print("DEBUG: Failed with error \(error)")
+//                return
+//            }
+//
+//            guard let pokemon = pokemon else { return }
+//            print("DEBUG: Pokemon array -> \(pokemon)")
+//            self.pokemon = pokemon
+//        }
     }
 }
 
